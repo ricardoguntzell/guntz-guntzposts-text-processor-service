@@ -14,9 +14,14 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
+    private static final String PROCESS_TEXT_PROCESSOR_RECEIVED = "text-processor.post-received.v1";
     private static final String PROCESS_TEXT_PROCESSOR_POST = "text-processor-service.post-processing.v1";
     public static final String QUEUE_PROCESS_TEXT_PROCESSOR_POST = PROCESS_TEXT_PROCESSOR_POST + ".q";
     public static final String DEAD_LETTER_QUEUE_PROCESS_POST = PROCESS_TEXT_PROCESSOR_POST + ".dlq";
+    public static final String FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED = PROCESS_TEXT_PROCESSOR_RECEIVED + ".e";
+
+    //post-service
+    private static final String QUEUE_POST_PROCESSING_RESULT = "post-service.post-processing-result.v1.q";
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
@@ -44,6 +49,24 @@ public class RabbitMQConfig {
     public Queue deadLetterQueueProcessPost() {
         return QueueBuilder
                 .durable(DEAD_LETTER_QUEUE_PROCESS_POST)
+                .build();
+    }
+
+    public Queue queuePostProcessingResult() {
+        return QueueBuilder
+                .durable(QUEUE_POST_PROCESSING_RESULT)
+                .build();
+    }
+
+    @Bean
+    public Binding binding() {
+        return BindingBuilder.bind(queuePostProcessingResult()).to(exchange());
+    }
+
+    @Bean
+    public FanoutExchange exchange() {
+        return ExchangeBuilder
+                .fanoutExchange(FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED)
                 .build();
     }
 

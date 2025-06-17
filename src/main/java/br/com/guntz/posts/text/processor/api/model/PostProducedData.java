@@ -3,14 +3,17 @@ package br.com.guntz.posts.text.processor.api.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
 @Data
-public class PostData {
+public class PostProducedData {
 
     private UUID postId;
 
-    private String postBody;
+    private Long wordCount;
+
+    private BigDecimal calculatedValue;
 
 }

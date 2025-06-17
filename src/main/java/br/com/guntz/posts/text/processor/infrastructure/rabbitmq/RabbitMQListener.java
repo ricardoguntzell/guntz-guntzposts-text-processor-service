@@ -1,6 +1,7 @@
 package br.com.guntz.posts.text.processor.infrastructure.rabbitmq;
 
-import br.com.guntz.posts.text.processor.api.model.PostData;
+import br.com.guntz.posts.text.processor.api.domain.service.TextProcessorService;
+import br.com.guntz.posts.text.processor.api.model.PostReceivedData;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,14 @@ import static br.com.guntz.posts.text.processor.infrastructure.rabbitmq.RabbitMQ
 @Component
 public class RabbitMQListener {
 
-    @SneakyThrows
-    @RabbitListener(queues = QUEUE_PROCESS_TEXT_PROCESSOR_POST)
-    public void handle(@Payload PostData postData) {
-        Thread.sleep(Duration.ofSeconds(5000).toSeconds());
+    private final TextProcessorService textProcessorService;
 
-        log.info("Read message... postId: {} --- postBody: {}", postData.getPostId(), postData.getPostBody());
+    @SneakyThrows
+    @RabbitListener(queues = QUEUE_PROCESS_TEXT_PROCESSOR_POST, concurrency = "2-3")
+    public void handleProcessPost(@Payload PostReceivedData postReceivedData) {
+        Thread.sleep(Duration.ofSeconds(5000).toSeconds());
+        log.info("Read message... postId: {} --- postBody: {}", postReceivedData.getPostId(), postReceivedData.getPostBody());
+        textProcessorService.processPostReading(postReceivedData);
     }
 
 }
