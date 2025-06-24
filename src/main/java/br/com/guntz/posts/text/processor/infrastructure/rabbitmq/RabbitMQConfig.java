@@ -60,15 +60,13 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding binding() {
-        return BindingBuilder.bind(queuePostProcessingResult()).to(exchange());
+        return BindingBuilder.bind(queueTextProcessorPost()).to(exchangePostServiceReceived());
     }
 
     @Bean
-    public FanoutExchange exchange() {
+    public FanoutExchange exchangePostServiceReceived() {
         return ExchangeBuilder
-                .fanoutExchange(FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED)
+                .fanoutExchange("post-service.post-received.v1.e")
                 .build();
     }
-
-
 }
