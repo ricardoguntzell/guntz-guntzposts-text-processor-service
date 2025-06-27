@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
-import static br.com.guntz.posts.text.processor.infrastructure.rabbitmq.RabbitMQConfig.FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED;
+import static br.com.guntz.posts.text.processor.infrastructure.rabbitmq.RabbitMQConfig.FONOUT_EXCHANGE_POST_RECEIVED;
 
 @Slf4j
 @AllArgsConstructor
@@ -39,8 +39,8 @@ public class TextProcessorService {
     }
 
     public void sendPostProcessed(PostProducedData postProducedData) {
-        rabbitTemplate.convertAndSend(FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED, "", postProducedData);
-        log.info("Post {} inserted in exchange: {}", postProducedData.getPostId(), FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED);
+        rabbitTemplate.convertAndSend(FONOUT_EXCHANGE_POST_RECEIVED, "", postProducedData);
+        log.info("Post {} inserted in exchange: {}", postProducedData.getPostId(), FONOUT_EXCHANGE_POST_RECEIVED);
     }
 
     private Long countWords(String word) {

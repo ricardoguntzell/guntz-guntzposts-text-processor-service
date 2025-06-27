@@ -14,14 +14,13 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
-    private static final String PROCESS_TEXT_PROCESSOR_RECEIVED = "text-processor.post-received.v1";
     private static final String PROCESS_TEXT_PROCESSOR_POST = "text-processor-service.post-processing.v1";
     public static final String QUEUE_PROCESS_TEXT_PROCESSOR_POST = PROCESS_TEXT_PROCESSOR_POST + ".q";
     public static final String DEAD_LETTER_QUEUE_PROCESS_POST = PROCESS_TEXT_PROCESSOR_POST + ".dlq";
-    public static final String FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED = PROCESS_TEXT_PROCESSOR_RECEIVED + ".e";
+    public static final String FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED = PROCESS_TEXT_PROCESSOR_POST + ".e";
 
     //post-service
-    private static final String QUEUE_POST_PROCESSING_RESULT = "post-service.post-processing-result.v1.q";
+    public static final String FONOUT_EXCHANGE_POST_RECEIVED = "post-service.post-processing-result.v1.e";
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
@@ -52,21 +51,15 @@ public class RabbitMQConfig {
                 .build();
     }
 
-    public Queue queuePostProcessingResult() {
-        return QueueBuilder
-                .durable(QUEUE_POST_PROCESSING_RESULT)
-                .build();
-    }
-
     @Bean
     public Binding binding() {
-        return BindingBuilder.bind(queueTextProcessorPost()).to(exchangePostServiceReceived());
+        return BindingBuilder.bind(queueTextProcessorPost()).to(exchangeTextProcessing());
     }
 
     @Bean
-    public FanoutExchange exchangePostServiceReceived() {
+    public FanoutExchange exchangeTextProcessing() {
         return ExchangeBuilder
-                .fanoutExchange("post-service.post-received.v1.e")
+                .fanoutExchange(FONOUT_EXCHANGE_TEXT_PROCESSOR_RECEIVED)
                 .build();
     }
 }
